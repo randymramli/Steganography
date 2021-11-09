@@ -8,12 +8,12 @@ def binaryConverter(message):
         return [format(i, '08b') for i in message]
     elif type(message) == int:
         return format(message, "08b")
+    else:
+        raise TypeError("Input not supported")
 
 def Encoder():
     pic_input = input("Please enter the image name with the extension: \n")
     pic_open = cv2.imread(pic_input)
-    print(type(pic_open))
-
 
     text = input("Please input the message you want to encrypt: \n")
     if len(text) == 0:
@@ -28,7 +28,33 @@ def Encoder():
     
 
 def Decoder():
-    pass
+    pic_input = input("Please enter name of the image you want to decode with the extension: \n")
+    pic_open = cv2.imread(pic_input)
+
+    result = showText(pic_open)
+    print(result)
+
+def showText(image):
+    BIT = 8
+    binary_value = ""
+    for values in image:
+        for pixel in values:
+            r,g,b = binaryConverter(pixel)
+            binary_value += r[-1]
+            binary_value += g[-1]
+            binary_value += b[-1]
+    
+    separated_bytes = [binary_value[i: i+BIT] for i in range(0, len(binary_value), BIT)]
+
+
+    text_result = ""
+
+    for byte in separated_bytes:
+        text_result += chr(int(byte,2))
+        if text_result[-2:] == "##":
+            break
+    
+    return text_result[:-2]
 
 def leastSigByte(image,message):
     
